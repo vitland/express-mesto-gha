@@ -28,7 +28,7 @@ module.exports.deleteCard = (req, res) => {
     .catch((err) => handleErrors(err, res));
 };
 
-module.exports.addlike = (req, res) => {
+module.exports.addLike = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
