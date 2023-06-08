@@ -5,9 +5,6 @@ const { handleErrors } = require("./errors");
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => {
-      if (!card) {
-        throw new NotFoundError("Запрашиваемая карта не найдена");
-      }
       res.send({ data: cards });
     })
     .catch((err) => handleErrors(err, res));
