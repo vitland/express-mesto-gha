@@ -1,4 +1,5 @@
 const express = require("express");
+const helmet = require("helmet");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const router = require("./routes");
@@ -6,11 +7,11 @@ const { PORT = 3000 } = process.env;
 const app = express();
 
 mongoose
-  .connect("mongodb://localhost:27017/mestodb", { useNewUrlParser: true })
+  .connect("mongodb://127.0.0.1:27017/mestodb", { useNewUrlParser: true })
   .then((res) => console.log("mongo UP"))
   .catch((err) => console.log(err));
 
-app.use(router);
+app.use(helmet());
 
 app.use((req, res, next) => {
   req.user = {
@@ -22,9 +23,7 @@ app.use((req, res, next) => {
 app.use(bodyParser.json()); // для собирания JSON-формата
 app.use(bodyParser.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
 
-app.use((req, res, next) => {
-  return res.status(404).send({ message: "Страница не найдена" });
-});
+app.use(router);
 
 app.listen(PORT, () => {
   console.log(`Сревер запущен на ${PORT} порту`);
