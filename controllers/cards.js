@@ -5,7 +5,7 @@ const { handleErrors } = require("../utils/errors");
 module.exports.getCards = (req, res) => {
   Card.find({})
     .then((cards) => {
-      return res.status(200).send({ data: cards });
+      return res.send({ data: cards });
     })
     .catch((err) => handleErrors(err, res));
 };
@@ -23,7 +23,7 @@ module.exports.deleteCard = (req, res) => {
       if (!card) {
         throw new NotFoundError("Запрашиваемая карта не найдена");
       }
-      return res.status(200).send({ data: card });
+      return res.send({ data: card });
     })
     .catch((err) => handleErrors(err, res));
 };
@@ -38,7 +38,7 @@ module.exports.addLike = (req, res) => {
       if (!card) {
         throw new NotFoundError("Запрашиваемая карта не найдена");
       }
-      return res.status(200).send({ data: card });
+      return res.send({ data: card });
     })
     .catch((err) => handleErrors(err, res));
 };
@@ -53,7 +53,7 @@ module.exports.removeLike = (req, res) => {
       if (!card) {
         throw new NotFoundError("Запрашиваемая карта не найдена");
       }
-      return res.status(200).send({ data: card });
+      return res.send({ data: card });
     })
     .catch((err) => handleErrors(err, res));
 };

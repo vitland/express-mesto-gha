@@ -4,7 +4,7 @@ const { handleErrors } = require("../utils/errors");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send({ data: users }))
+    .then((users) => res.send({ data: users }))
     .catch((err) => handleErrors(err, res));
 };
 
@@ -15,7 +15,7 @@ module.exports.getUser = (req, res) => {
       if (!user) {
         throw new NotFoundError("Запрашиваемый пользователь не найден");
       }
-      return res.status(201).send({ data: user });
+      return res.send({ data: user });
     })
     .catch((err) => handleErrors(err, res));
 };
@@ -23,7 +23,7 @@ module.exports.getUser = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, avatar, about } = req.body;
   User.create({ name, avatar, about })
-    .then((users) => res.status(200).send({ data: users }))
+    .then((users) => res.status(201).send({ data: users }))
     .catch((err) => handleErrors(err, res));
 };
 
@@ -35,7 +35,7 @@ module.exports.updateUserInfo = (req, res) => {
       if (!user) {
         throw new NotFoundError("Запрашиваемый пользователь не найден");
       }
-      return res.status(200).send({ data: user });
+      return res.send({ data: user });
     })
     .catch((err) => handleErrors(err, res));
 };
@@ -48,7 +48,7 @@ module.exports.updateUserAvatar = (req, res) => {
       if (!user) {
         throw new NotFoundError("Запрашиваемый пользователь не найден");
       }
-      return res.status(200).send({ data: user });
+      return res.send({ data: user });
     })
     .catch((err) => handleErrors(err, res));
 };
