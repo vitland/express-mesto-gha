@@ -7,6 +7,7 @@ module.exports = class NotFoundError extends Error {
 };
 
 module.exports.handleErrors = (err, res) => {
+  console.log(err)
   if (err.name === "NotFound") {
     return res.status(404).send({ message: err.message });
   }
