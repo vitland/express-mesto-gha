@@ -1,15 +1,16 @@
 const bcrypt = require("bcryptjs"); // импортируем bcrypt
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const { NotFoundError, handleErrors } = require("../utils/errors");
+const { NotFoundError } = require("../utils/errors");
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
+  console.log(req.user);
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) => handleErrors(err, res));
+    .catch(next);
 };
 
-module.exports.getUser = (req, res) => {
+module.exports.getUser = (req, res, next) => {
   const { id } = req.params;
   User.findOne({ _id: id })
     .then((user) => {
@@ -18,10 +19,10 @@ module.exports.getUser = (req, res) => {
       }
       return res.send({ data: user });
     })
-    .catch((err) => handleErrors(err, res));
+    .catch(next);
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const { name, avatar, about, email, password } = req.body;
   bcrypt
     .hash(password, 10)
@@ -29,10 +30,10 @@ module.exports.createUser = (req, res) => {
       return User.create({ name, avatar, about, email, password });
     })
     .then((user) => res.status(201).send({ data: user }))
-    .catch((err) => handleErrors(err, res));
+    .catch(next);
 };
 
-module.exports.updateUserInfo = (req, res) => {
+module.exports.updateUserInfo = (req, res, next) => {
   const { _id } = req.user;
 
   User.findByIdAndUpdate(_id, req.body, { new: true, runValidators: true })
@@ -42,10 +43,10 @@ module.exports.updateUserInfo = (req, res) => {
       }
       return res.send({ data: user });
     })
-    .catch((err) => handleErrors(err, res));
+    .catch(next);
 };
 
-module.exports.updateUserAvatar = (req, res) => {
+module.exports.updateUserAvatar = (req, res, next) => {
   const { _id } = req.user;
 
   User.findByIdAndUpdate(_id, req.body, { new: true, runValidators: true })
@@ -55,16 +56,17 @@ module.exports.updateUserAvatar = (req, res) => {
       }
       return res.send({ data: user });
     })
-    .catch((err) => handleErrors(err, res));
+    .catch(next);
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, "secret", { expiresIn: "7d" });
-      res.cookie("jwt", token, { maxAge: 3600000 * 24 * 7, httpOnly: true })
-      .end();
+      res
+        .cookie("jwt", token, { maxAge: 3600000 * 24 * 7, httpOnly: true })
+        .end();
     })
-    .catch((err) => handleErrors(err, res));
+    .catch(next);
 };
