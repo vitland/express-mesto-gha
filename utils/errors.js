@@ -1,15 +1,25 @@
-module.exports = class NotFoundError extends Error {
+class NotFoundError extends Error {
   constructor(message) {
     super(message);
     this.name = "NotFound";
     this.statusCode = 404;
   }
-};
+}
+class LoginError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "LoginError";
+    this.statusCode = 401;
+  }
+}
 
-module.exports.handleErrors = (err, res) => {
-  console.log(err)
+handleErrors = (err, res) => {
+  console.log(err);
   if (err.name === "NotFound") {
-    return res.status(404).send({ message: err.message });
+    return res.status(err.statusCode).send({ message: err.message });
+  }
+  if (err.name === "LoginError") {
+    return res.status(err.statusCode).send({ message: err.message });
   }
   if (err.name === "ValidationError") {
     return res.status(400).send({ message: err.message });
@@ -19,3 +29,5 @@ module.exports.handleErrors = (err, res) => {
   }
   return res.status(500).send({ message: err.message });
 };
+
+module.exports = { handleErrors, LoginError, NotFoundError };

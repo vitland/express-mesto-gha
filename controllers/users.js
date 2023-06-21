@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs"); // импортируем bcrypt
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const NotFoundError = require("../utils/errors");
-const { handleErrors } = require("../utils/errors");
+const { NotFoundError, handleErrors } = require("../utils/errors");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -26,7 +26,7 @@ module.exports.createUser = (req, res) => {
   bcrypt
     .hash(password, 10)
     .then((password) => {
-      return User.create({ name, avatar, about, email, password});
+      return User.create({ name, avatar, about, email, password });
     })
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => handleErrors(err, res));
@@ -54,6 +54,17 @@ module.exports.updateUserAvatar = (req, res) => {
         throw new NotFoundError("Запрашиваемый пользователь не найден");
       }
       return res.send({ data: user });
+    })
+    .catch((err) => handleErrors(err, res));
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, "secret", { expiresIn: "7d" });
+      res.cookie("jwt", token, { maxAge: 3600000 * 24 * 7, httpOnly: true })
+      .end();
     })
     .catch((err) => handleErrors(err, res));
 };

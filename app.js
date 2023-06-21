@@ -7,7 +7,10 @@ const { PORT = 3000 } = process.env;
 const app = express();
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/mestodb", { useNewUrlParser: true })
+  .connect("mongodb://127.0.0.1:27017/mestodb", {
+    useNewUrlParser: true,
+    autoIndex: true,
+  })
   .then((res) => console.log("mongo UP"))
   .catch((err) => console.log(err));
 
