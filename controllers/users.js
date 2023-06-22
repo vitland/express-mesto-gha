@@ -4,7 +4,6 @@ const User = require("../models/user");
 const { NotFoundError } = require("../utils/errors");
 
 module.exports.getUsers = (req, res, next) => {
-  console.log(req.user);
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch(next);
@@ -20,6 +19,16 @@ module.exports.getUser = (req, res, next) => {
       return res.send({ data: user });
     })
     .catch(next);
+};
+
+module.exports.getCurrentUser = async (req, res, next) => {
+  const { _id } = jwt.decode(req.cookies.jwt);
+  try {
+    const user = await User.findOne({ _id });
+    return res.send({ data: user });
+  } catch (err) {
+    next(err);
+  }
 };
 
 module.exports.createUser = (req, res, next) => {
