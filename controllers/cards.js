@@ -19,13 +19,12 @@ module.exports.createCard = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   Card.findOne({ _id: req.params.cardId })
     .then((card) => {
-      if (req.user._id !== card.owner.toString()) {
-        throw new ForbiddenError("Нельзя удалить чужую карту");
-      }
       if (!card) {
         throw new NotFoundError("Запрашиваемая карта не найдена");
       }
-
+      if (req.user._id !== card?.owner.toString()) {
+        throw new ForbiddenError("Нельзя удалить чужую карту");
+      }
       card.deleteOne();
       return res.send({ data: card });
     })
