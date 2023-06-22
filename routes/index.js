@@ -2,7 +2,7 @@ const auth = require('../middlewares/auth');
 
 const router = require('express').Router()
 router.use("/signup", require("./signup"));
-router.use("/login", require("./login"));
+router.use("/signin", require("./signin"));
 router.use(auth)
 router.use("/users", require("./users"));
 router.use("/cards", require("./cards"));

@@ -38,7 +38,9 @@ module.exports.createUser = (req, res, next) => {
     .then((password) => {
       return User.create({ name, avatar, about, email, password });
     })
-    .then((user) => res.status(201).send({ data: user }))
+    .then(({ name, avatar, about, email }) =>
+      res.status(201).send({ data: { name, avatar, about, email } })
+    )
     .catch(next);
 };
 
@@ -68,7 +70,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.login = (req, res, next) => {
+module.exports.signin = (req, res, next) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
