@@ -6,6 +6,9 @@ errorsHandler = (err, req, res, next) => {
   if (err.name === "LoginError") {
     return res.status(err.statusCode).send({ message: err.message });
   }
+  if (err.name === "ForbiddenError") {
+    return res.status(err.statusCode).send({ message: err.message });
+  }
   if (err.name === "ValidationError") {
     return res.status(400).send({ message: err.message });
   }

@@ -12,5 +12,12 @@ class LoginError extends Error {
     this.statusCode = 401;
   }
 }
+class ForbiddenError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ForbiddenError";
+    this.statusCode = 409;
+  }
+}
 
-module.exports = { LoginError, NotFoundError };
+module.exports = { LoginError, NotFoundError, ForbiddenError };
