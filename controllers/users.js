@@ -1,7 +1,8 @@
-const bcrypt = require("bcryptjs"); // импортируем bcrypt
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
-const { NotFoundError } = require("../utils/errors");
+const bcrypt = require('bcryptjs'); // импортируем bcrypt
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+const { NotFoundError } = require('../errors/notFoundError');
+const { SECRET } = require('../config');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -14,13 +15,14 @@ module.exports.getUser = (req, res, next) => {
   User.findOne({ _id: id })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError("Запрашиваемый пользователь не найден");
+        throw new NotFoundError('Запрашиваемый пользователь не найден');
       }
       return res.send({ data: user });
     })
     .catch(next);
 };
 
+// eslint-disable-next-line consistent-return
 module.exports.getCurrentUser = async (req, res, next) => {
   const { _id } = jwt.decode(req.cookies.jwt);
   try {
@@ -32,15 +34,22 @@ module.exports.getCurrentUser = async (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const { name, avatar, about, email, password } = req.body;
+  const {
+    name, avatar, about, email, password,
+  } = req.body;
   bcrypt
     .hash(password, 10)
-    .then((password) => {
-      return User.create({ name, avatar, about, email, password });
-    })
-    .then(({ name, avatar, about, email }) =>
-      res.status(201).send({ data: { name, avatar, about, email } })
-    )
+    .then((passwordHash) => User.create({
+      name, avatar, about, email, password: passwordHash,
+    }))
+    .then(({
+      // eslint-disable-next-line no-shadow
+      name, avatar, about, email,
+    }) => res.status(201).send({
+      data: {
+        name, avatar, about, email,
+      },
+    }))
     .catch(next);
 };
 
@@ -50,7 +59,7 @@ module.exports.updateUserInfo = (req, res, next) => {
   User.findByIdAndUpdate(_id, req.body, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError("Запрашиваемый пользователь не найден");
+        throw new NotFoundError('Запрашиваемый пользователь не найден');
       }
       return res.send({ data: user });
     })
@@ -63,7 +72,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
   User.findByIdAndUpdate(_id, req.body, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError("Запрашиваемый пользователь не найден");
+        throw new NotFoundError('Запрашиваемый пользователь не найден');
       }
       return res.send({ data: user });
     })
@@ -74,9 +83,9 @@ module.exports.signin = (req, res, next) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, "secret", { expiresIn: "7d" });
-      res.cookie("jwt", token, { maxAge: 3600000 * 24 * 7, httpOnly: true });
-      res.send({ message: "Авторизирован" }).end();
+      const token = jwt.sign({ _id: user._id }, SECRET, { expiresIn: '7d' });
+      res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true });
+      res.send({ message: 'Авторизирован' }).end();
     })
     .catch(next);
 };
