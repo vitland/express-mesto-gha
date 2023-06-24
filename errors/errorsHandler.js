@@ -1,4 +1,5 @@
-const errorsHandler = (err, req, res) => {
+/* eslint-disable no-unused-vars */
+const errorsHandler = (err, req, res, next) => {
   if (err.name === 'NotFound') {
     return res.status(err.statusCode).send({ message: err.message });
   }
